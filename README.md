@@ -22,10 +22,13 @@ shipshape is a simple command-line tool to facilitate the deployment of applicat
 Install the package globally using npm. This will make the `shipshape` command available in your command line or PowerShell.
 
 ```cmd
+npm install -g @kstrele/shipshape
+```
+If you have downloaded or cloned the github repository, you can install it from within its root folder with:
+
+```cmd
 npm install -g .
 ```
-
-*(Note: you run this from the directory where you have the package files, or `npm install -g <package-name>` if published to a registry)*
 
 ## **Usage**
 
