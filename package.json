@@ -1,5 +1,5 @@
 {
-  "name": "shipshape",
+  "name": "@kstrele/shipshape",
   "version": "0.1.1",
   "description": "A simple tool to deploy applications to a local server on Windows.",
   "main": "index.js",
@@ -12,7 +12,7 @@
   "keywords": [
     "deploy",
     "windows",
-    "local"
+    "local server"
   ],
   "author": "Klaus Strele <klaus.strele@strele.com>",
   "license": "MIT",
@@ -25,9 +25,9 @@
   "dependencies": {
     "fs-extra": "^11.3.0"
   },
-  "homepage": "https://github.com/klaus-strele/npm-shipshape",
+  "homepage": "https://github.com/klaus-strele/shipshape",
   "repository": {
     "type": "git",
-    "url": "https://github.com/klaus-strele/npm-shipshape"
+    "url": "https://github.com/klaus-strele/shipshape"
   }
 }
