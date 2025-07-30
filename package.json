@@ -25,7 +25,7 @@
   "dependencies": {
     "fs-extra": "^11.3.0"
   },
-  "homepage": "https://github.com/klaus-strele/shipshape",
+  "homepage": "https://www.strele.com/shipshape/",
   "repository": {
     "type": "git",
     "url": "https://github.com/klaus-strele/shipshape.git"
