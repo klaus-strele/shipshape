@@ -149,7 +149,8 @@ shipshape --help
    ```
 
    The tool will then:  
-   1. Run the commands listed in `preDeploy`.  
+   1. Run the commands listed in `preDeploy`.
+   2. Create the `destination` directory if it does not exist, or empty an existing directory while keeping those files and subfolders in `keepList`
    2. Copy the contents of the `source` directory to the `destination`.  
    3. Run the commands listed in `postDeploy`.
 

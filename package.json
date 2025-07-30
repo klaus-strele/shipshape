@@ -28,6 +28,6 @@
   "homepage": "https://github.com/klaus-strele/shipshape",
   "repository": {
     "type": "git",
-    "url": "https://github.com/klaus-strele/shipshape"
+    "url": "https://github.com/klaus-strele/shipshape.git"
   }
 }
