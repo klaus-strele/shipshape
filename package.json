@@ -14,7 +14,7 @@
     "windows",
     "local server"
   ],
-  "author": "Klaus Strele <klaus.strele@strele.com>",
+  "author": "Klaus Strele",
   "license": "MIT",
   "os": [
     "win32"
