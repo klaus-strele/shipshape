@@ -2,7 +2,7 @@
 
 shipshape is a simple command-line tool to facilitate the deployment of applications to a local server in a **Windows environment**.
 
-**Note:** This tool is designed for and will only run on Microsoft Windows (`win32` platform).
+**Note:** This tool is designed for and will only run on Microsoft Windows.
 
 ## **Features**
 
@@ -24,7 +24,7 @@ Install the package globally using npm. This will make the `shipshape` command a
 ```cmd
 npm install -g @kstrele/shipshape
 ```
-If you have downloaded or cloned the github repository, you can install it from within its root folder with:
+In case you have downloaded or cloned the github repository, you can install it from within its root folder with:
 
 ```cmd
 npm install -g .
@@ -40,7 +40,8 @@ shipshape [options]
 
 ### **Command Line Options**
 
-* `-e, --env <environment>`: Specify the target environment (DEV, UAT, PROD)
+* `-e, --env <environment>`: Specify the target environment (e.g. DEV, UAT, PROD)
+* `-v, --version`: Show version number
 * `-h, --help`: Show help message
 
 ### **Examples**
@@ -66,7 +67,7 @@ shipshape --help
     ```json
     {
       "default": {
-        "source": "build",
+        "source": "./dist",
         "preDeploy": [
           "npm install",
           "npm run build"
@@ -92,14 +93,14 @@ shipshape --help
           ]
         },
         "PROD": {
-          "destination": "C:\\inetpub\\wwwroot\\myapp-prod",
+          "destination": "\\\\server\\share\\myapp-prod",
           "preDeploy": [
             "npm run build",
             "npm run test",
             "npm run lint"
           ],
           "postDeploy": [
-            "echo Deployed to PRODUCTION environment",
+            "echo Deployed to PROD environment",
             "echo %date% %time% >> deployment.log"
           ]
         }
@@ -107,19 +108,22 @@ shipshape --help
     }
     ```
 
-    **Option 2: Legacy Single Configuration**
+    **Option 2: Simple Default Configuration**
+    
     ```json
     {
-      "source": "build",  
-      "destination": "C:\\path\\to\\your\\server\\root",  
-      "preDeploy": [  
-        "npm install",  
-        "npm run build"  
-      ],  
-      "postDeploy": [  
-        "iisreset /stop",  
-        "iisreset /start"  
-      ]  
+      "default": {
+        "source": "./dist",
+      	"destination": "C:\\path\\to\\your\\application\\root",  
+        "preDeploy": [
+          "npm install",
+          "npm run build"
+        ],
+        "postDeploy": [  
+          "iisreset /stop",  
+          "iisreset /start"  
+        ]  
+      }
     }
     ```
     
@@ -153,9 +157,9 @@ shipshape --help
 
    The tool will then:  
    1. Run the commands listed in `preDeploy`.
-   2. Create the `destination` directory if it does not exist, or empty an existing directory while keeping those files and subfolders in `keepList`
-   2. Copy the contents of the `source` directory to the `destination`.  
-   3. Run the commands listed in `postDeploy`.
+   2. Create the `destination` directory if it does not exist or empty an existing directory while keeping those files and subfolders in `keepList`.
+   3. Copy the contents of the `source` directory to the `destination`.  
+   4. Run the commands listed in `postDeploy`.
 
 ## **Configuration Options**
 
@@ -163,8 +167,8 @@ shipshape --help
 
 When using environment-specific configuration, the structure is:
 
-* `default` (object): Base configuration that applies to all environments
-* `environments` (object): Environment-specific overrides
+* `default` Base configuration that applies to all environments
+* `environments` Environment-specific overrides
 
 Each environment configuration can override any property from the default configuration.
 
@@ -221,9 +225,7 @@ The `keepList` allows you to preserve important files and directories in the des
 
 ### **Environment Selection**
 
-* If no environment is specified, the tool **defaults to the first environment** defined in the configuration
 * For environment-specific configurations: Valid environments are dynamically read from the `environments` section
-* For legacy configurations: Defaults to `DEV`, `UAT`, `PROD`
 * Environment names are case-insensitive but will be converted to uppercase internally
 * You can define custom environments like `LOCAL`, `DEVELOPMENT`, `STAGING`, `INTEGRATION`, `PRODUCTION`, etc.
 

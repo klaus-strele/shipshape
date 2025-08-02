@@ -6,6 +6,15 @@ const { exec } = require('child_process');
 const fsExtra = require('fs-extra');
 const configFile = 'shipshape.config.json';
 
+// Get version from package.json
+const packageJSON = require('./package.json');
+const version = packageJSON.version;
+
+// Ensure the script is running on Windows.
+if (process.platform !== 'win32') {
+    console.error('This deployment tool is designed to run only on Windows.');
+    process.exit(1);
+}
 
 // --- Command Line Arguments Parsing ---
 const args = process.argv.slice(2);
@@ -17,30 +26,24 @@ for (let i = 0; i < args.length; i++) {
     if (arg === '--env' || arg === '-e') {
         environment = args[i + 1];
         i++; // Skip the next argument as it's the environment value
+    } else if (arg === '--version' || arg === '-v') {
+        console.log(`shipshape v${version}`);
+        process.exit(0);
     } else if (arg === '--help' || arg === '-h') {
         showHelp();
         process.exit(0);
-    } else if (!environment) {
-        // If no --env flag was used, treat the first argument as environment
-        environment = arg;
     }
-}
-
-// Ensure the script is running on Windows.
-if (process.platform !== 'win32') {
-    console.error('This deployment tool is designed to run only on Windows.');
-    process.exit(1);
 }
 
 // --- Configuration Loading ---
 const configPath = path.resolve(process.cwd(), configFile);
 if (!fs.existsSync(configPath)) {
-    console.error(`Error: ${configFile} not found in the project root.`);
+    console.error(`Error: ${configFile} not found.`);
     console.error('Please create this file to specify deployment settings.');
     process.exit(1);
 }
 
-let config, fullConfig;
+let fullConfig;
 try {
     const configFileContent = fs.readFileSync(configPath, 'utf8');
     fullConfig = JSON.parse(configFileContent);
@@ -49,45 +52,43 @@ try {
     process.exit(1);
 }
 
-// Determine valid environments and default environment
-let validEnvironments = ['DEV', 'UAT', 'PROD']; // Fallback for legacy config
-let defaultEnvironment = 'DEV';
-
+// Determine valid environments
+let validEnvironments = [];
 if (fullConfig.environments) {
     validEnvironments = Object.keys(fullConfig.environments).map(env => env.toUpperCase());
-    defaultEnvironment = validEnvironments[0]; // Use first environment as default
-}
-
-// Default to first available environment if no environment specified
-if (!environment) {
-    console.log(`No environment specified, defaulting to ${defaultEnvironment}`);
-    environment = defaultEnvironment;
 }
 
 // Validate environment
-environment = environment.toUpperCase();
-if (!validEnvironments.includes(environment)) {
+if (environment) {
+    environment = environment.toUpperCase();
+}
+if (environment && !validEnvironments.includes(environment)) {
     console.error(`Error: Invalid environment "${environment}".`);
-    console.error(`Valid environments are: ${validEnvironments.join(', ')}`);
+    if (validEnvironments.length > 0) {
+        console.error(`Valid environments are: ${validEnvironments.join(', ')}`);
+    } else {
+        console.error('No environments defined in the configuration file.');
+    }
     process.exit(1);
 }
 
-console.log(`Deploying to environment: ${environment}`);
+// Load default configuration
+let defaultConfig = {};
+if (fullConfig.default) {
+    defaultConfig = fullConfig.default;
+}
 
 // Load environment-specific configuration
+let config;
 try {
     // Check if config has environment-specific settings
     if (fullConfig.environments && fullConfig.environments[environment]) {
         console.log(`Using environment-specific configuration for ${environment}`);
-        config = { ...fullConfig.default, ...fullConfig.environments[environment] };
-    } else if (fullConfig.environments) {
-        console.error(`Error: Environment "${environment}" not found in configuration.`);
-        console.error(`Available environments: ${Object.keys(fullConfig.environments).join(', ')}`);
-        process.exit(1);
+        config = { ...defaultConfig, ...fullConfig.environments[environment] };
     } else {
         // Fallback to old format (no environment-specific config)
-        console.log('Using legacy configuration format (no environment-specific settings)');
-        config = fullConfig;
+        console.log('Using default configuration (no environment-specific settings)');
+        config = defaultConfig;
     }
 } catch (error) {
     console.error(`Error reading or parsing ${configFile}:`, error);
@@ -99,6 +100,11 @@ const { source, destination, preDeploy, postDeploy } = config;
 
 if (!source || !destination) {
     console.error(`Error: "source" and "destination" properties are mandatory in ${configFile}.`);
+    process.exit(1);
+}
+
+if (source === destination) {
+    console.error(`Error: "source" and "destination" cannot be the same.`);
     process.exit(1);
 }
 
@@ -197,15 +203,17 @@ Usage: shipshape [options]
 
 Options:
   -e, --env <environment>    Specify the target environment
+  -v, --version              Show version number
   -h, --help                 Show this help message
 
 Examples:
   shipshape --env DEV
   shipshape -e PROD
+  shipshape --version
 
-Note: Available environments are defined in your shipshape.config.json file.
-For environment-specific configs, environments are read from the "environments" section.
-For legacy configs, defaults to DEV, UAT, PROD.
+Note: configuration settings are defined in your shipshape.config.json file.
+Environment-specific configs are read from the "environments" section and override defaults.
+If no environment is specified, the "default" section will be used.
     `);
 }
 

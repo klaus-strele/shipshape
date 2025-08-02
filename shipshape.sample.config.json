@@ -1,0 +1,42 @@
+{
+  "default": {
+    "source": "./dist",
+    "destination": "C:\\temp\\local",
+    "preDeploy": [
+      "npm run build"
+    ],
+    "postDeploy": []
+  },
+  "environments": {
+    "STAGING": {
+      "destination": "\\\\server\\share\\staging",
+      "postDeploy": [
+        "echo Deployed to STAGING environment"
+      ],
+      "keepList": [
+        "web.config",
+        "logs",
+        "uploads",
+        ".env"
+      ]
+    },
+    "PRODUCTION": {
+      "destination": "\\\\server\\share\\production",
+      "preDeploy": [
+        "npm run build",
+        "npm run test",
+        "npm run e2e-test"
+      ],
+      "postDeploy": [
+        "echo Running post-deployment tasks...",
+        "echo Creating backup timestamp...",
+        "echo %date% %time% >> deployment.log",
+        "echo Deployed to PRODUCTION environment"
+      ],
+      "keepList": [
+        "web.config",
+        "logs"
+      ]
+    }
+  }
+}

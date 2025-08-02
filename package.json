@@ -1,6 +1,6 @@
 {
   "name": "@kstrele/shipshape",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "A simple tool to deploy applications to a local server on Windows.",
   "main": "index.js",
   "bin": {
