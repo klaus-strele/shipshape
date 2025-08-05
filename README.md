@@ -47,7 +47,7 @@ shipshape [options]
 ### **Examples**
 
 ```cmd
-# Deploy to DEV environment (default)
+# Deploy to default environment
 shipshape
 
 # Deploy to specific environment
