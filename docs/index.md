@@ -11,11 +11,11 @@ After local development, I have to deploy these applications. Usually, this mean
 **Requirements**
 - copy build artefacts from source directory to destination directory
 - empty the destination directory beforehand, but with the ability to keep certain items (log files for example)
-- run a couple of commands before starting the file copy (pre-deployment)
-- run a couple of commands after completing the file copy (post-deployment)
+- run commands before starting the file copy (pre-deployment)
+- run commands after completing the file copy (post-deployment)
 - the ability to target different environments with different configurations
 - maintaining all that in a simple configuration file
-- integration into existing workflows (npm)
+
 
 
 
